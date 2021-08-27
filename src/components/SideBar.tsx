@@ -1,3 +1,37 @@
-export function SideBar() {
-  // Complete aqui
+import { Button } from "./Button";
+import { useEffect, useState } from 'react';
+import { GenreResponseProps } from "./Interfaces";
+import { api } from "../services/api";
+
+interface SideBarProps {
+  handleClickButton: (id: number) => void;
+  selectedGenreId: number;
+}
+
+export function SideBar({handleClickButton, selectedGenreId}:SideBarProps ) {
+  const [genres, setGenres] = useState<GenreResponseProps[]>([]);   
+
+  useEffect(() => {     
+    api.get<GenreResponseProps[]>('genres').then(response => {
+      setGenres(response.data);
+    })
+  }, []);
+ 
+  return(     
+       <nav className="sidebar">
+        <span>Watch<p>Me</p></span>
+
+          {genres.map(genre => (
+            <Button
+              key={String(genre.id)}
+              title={genre.title}
+              iconName={genre.name}
+              onClick={() => handleClickButton(genre.id)}
+              selected={selectedGenreId === genre.id}
+            />
+          ))}        
+        </nav>
+      
+  )
+
 }
